@@ -119,14 +119,18 @@ CapacitorPush.addListener('voipCallRejected', (data) => {
 ```
 
 ## Screenshots Android:
-![Project Logo](src/screenshots/ss_1.jpeg)
-![Project Logo](src/screenshots/ss_2.jpeg)
-![Project Logo](src/screenshots/ss_3.jpeg)
-![Project Logo](src/screenshots/ss_4.jpeg)
-![Project Logo](src/screenshots/ss_5.jpeg)
-![Project Logo](src/screenshots/ss_6.jpeg)
-![Project Logo](src/screenshots/ss_7.jpeg)
-![Project Logo](src/screenshots/ss_8.jpeg)
+
+<p align="center">
+  <img src="src/screenshots/ss_1.jpeg" height="340">
+  <img src="src/screenshots/ss_2.jpeg" height="340">
+  <img src="src/screenshots/ss_3.jpeg" height="340">
+  <img src="src/screenshots/ss_4.jpeg" height="340">
+  <img src="src/screenshots/ss_5.jpeg" height="340">
+  <img src="src/screenshots/ss_6.jpeg" height="340">
+  <img src="src/screenshots/ss_7.jpeg" height="340">
+  <img src="src/screenshots/ss_8.jpeg" height="340">
+</p>
+
 
 ---
 
