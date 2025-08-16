@@ -1,6 +1,6 @@
 # CapacitorPushDemo App
 
-CapacitorPush is a Capacitor plugin that provides seamless integration of Push Notifications, VoIP Pushes, and CallKit call management for iOS apps built with Capacitor. It enables native push and VoIP token management, incoming call handling, and call control without requiring users to handle native AppDelegate registration callbacks manually.
+CapacitorPush is a Capacitor plugin that provides seamless integration of Push Notifications, VoIP Pushes, and CallKit call management for iOS apps built with Capacitor. It enables native push and VoIP token management, incoming call handling, and call control without requiring users to handle native AppDelegate registration callbacks manually. The purpose of this CapacitorPushDemo App is to demonstrate how you can integrate this plugin into your own projects.
 
 ---
 
@@ -8,12 +8,8 @@ CapacitorPush is a Capacitor plugin that provides seamless integration of Push N
 
 - Register for remote push notifications and VoIP pushes  
 - Automatically handle APNS and VoIP push tokens  
-- Support for CallKit incoming calls with video/audio option  
-- Call management: answer, end, hold, mute calls programmatically  
+- Support for CallKit incoming calls with callAccept and callReject triggers  
 - Notification and CallKit event listeners in JavaScript  
-- Handles app readiness and queues notifications when WebView is not ready  
-- No manual AppDelegate code required for remote token registration (via method swizzling)
-
 ---
 
 ## Installation
@@ -33,6 +29,53 @@ npx cap open ios
 
 3. In your Xcode project, enable **Push Notifications** and **Background Modes** capabilities, especially **Voice over IP** for VoIP Pushes.
 
+4. iOS specific setup:
+
+For iOS push notifications and VoIP pushes to work correctly, you need to add the following methods inside your AppDelegate.swift file:
+
+```
+// Called when APNs has assigned a device token to the app
+func application(_ application: UIApplication,
+                 didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    // Send to default Capacitor notification (for other plugins)
+    NotificationCenter.default.post(
+        name: .capacitorDidRegisterForRemoteNotifications,
+        object: deviceToken
+    )
+    
+    // Send to custom CapacitorPushPlugin
+    NotificationCenter.default.post(
+        name: .init("CapacitorPushPluginDidRegister"),
+        object: nil,
+        userInfo: ["deviceToken": deviceToken]
+    )
+    
+    // Debug log
+    let tokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
+    print("AppDelegate: Device token received: \(tokenString)")
+}
+
+// Called when APNs registration failed
+func application(_ application: UIApplication,
+                 didFailToRegisterForRemoteNotificationsWithError error: Error) {
+    // Send to default Capacitor notification (for other plugins)
+    NotificationCenter.default.post(
+        name: .capacitorDidFailToRegisterForRemoteNotifications,
+        object: error
+    )
+    
+    // Send to custom CapacitorPushPlugin
+    NotificationCenter.default.post(
+        name: .init("CapacitorPushPluginDidFail"),
+        object: nil,
+        userInfo: ["error": error]
+    )
+    
+    // Debug log
+    print("AppDelegate: Failed to register for remote notifications: \(error)")
+}
+
+```
 ---
 
 ## Usage
@@ -43,27 +86,9 @@ npx cap open ios
 import { CapacitorPush } from 'capacitor-push';
 
 // Register for push notifications
-await CapacitorPush.registerForPushNotifications();
+await CapacitorPush.register();
 ```
 
-### Register for VoIP Push Notifications
-
-```typescript
-// Register for VoIP push notifications
-await CapacitorPush.registerForVoIPPushes();
-```
-
-### Get Push Tokens
-
-```typescript
-// Get APNS token
-const { token } = await CapacitorPush.getPushToken();
-console.log('Push Token:', token);
-
-// Get VoIP token
-const { voipToken } = await CapacitorPush.getVoIPToken();
-console.log('VoIP Token:', voipToken);
-```
 ### Event Listeners
 
 ```typescript
@@ -77,6 +102,11 @@ CapacitorPush.addListener('voipRegistration', (data) => {
   console.log('VoIP token received:', data.token);
 });
 
+// Listen for notification received events
+CapacitorPush.addListener('pushNotificationReceived', (notification) => {
+    console.log('Notification:', notification);
+});
+
 // Listen for incoming call events
 CapacitorPush.addListener('voipCallAccepted', (data) => {
     console.log('Incoming Call Accepted:', data);
@@ -87,6 +117,16 @@ CapacitorPush.addListener('voipCallRejected', (data) => {
   console.log('Incoming Call Rejected:', notification);
 });
 ```
+
+## Screenshots Android:
+![Project Logo](src/screenshots/ss_1.jpeg)
+![Project Logo](src/screenshots/ss_2.jpeg)
+![Project Logo](src/screenshots/ss_3.jpeg)
+![Project Logo](src/screenshots/ss_4.jpeg)
+![Project Logo](src/screenshots/ss_5.jpeg)
+![Project Logo](src/screenshots/ss_6.jpeg)
+![Project Logo](src/screenshots/ss_7.jpeg)
+![Project Logo](src/screenshots/ss_8.jpeg)
 
 ---
 
@@ -100,18 +140,6 @@ Registers the app for remote push notifications.
 
 **Returns:** `Promise<void>`
 
-#### `getPushToken()`
-
-Gets the current APNS push token.
-
-**Returns:** `Promise<{ token: string }>`
-
-#### `getVoIPToken()`
-
-Gets the current VoIP push token.
-
-**Returns:** `Promise<{ voipToken: string }>`
-
 ### Events
 
 #### `registration`
@@ -120,7 +148,7 @@ Fired when a push token (FCM/iOS) is received.
 
 **Data:** `{ token: string }`
 
-#### `voipTokenReceived`
+#### `voipRegistration`
 
 Fired when a VoIP token is received.
 
