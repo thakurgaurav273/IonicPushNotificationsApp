@@ -12,6 +12,38 @@ CapacitorPush is a Capacitor plugin that provides seamless integration of Push N
 - Notification and CallKit event listeners in JavaScript  
 ---
 
+
+# Getting Started with This App
+
+This guide provides the necessary steps to set up and run this Ionic application, which uses CometChat for its messaging feature to demonstrate the features of capacitor-push plugin.
+
+## 1. Install Dependencies
+
+First, navigate to your project directory and install the required dependencies and sync Capacitor.
+
+```bash
+npm install
+ionic cap sync
+```
+
+## 2. Configure CometChat
+
+You will need a CometChat account and an app to use the real-time chat features.
+
+* Go to [app.cometchat.com](https://app.cometchat.com/) and create a new app.
+* Once your app is created, navigate to the **Dashboard** and copy your **App Credentials** (App ID, Region and Auth Key).
+* In your app's code, update the configuration files with these credentials.
+* For push notifications, go to **Notifications** in the CometChat Dashboard.
+* Add your **FCM (Firebase Cloud Messaging)** and **APNs (Apple Push Notification Service)** providers and update their respective `provider IDs` and `credentials` in the placeholders of the app.
+
+## 3. Run the Application
+
+The final step is to build and run the app on a device or emulator using your preferred IDE.
+
+* For **Android**: Open the project in **Android Studio**.
+* For **iOS**: Open the project in **Xcode**.
+* From your IDE, build and run the app on your connected device or emulator.
+
 ## Installation
 
 1. Install the plugin package in your Capacitor project:
